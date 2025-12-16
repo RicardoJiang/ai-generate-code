@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Now in Kotlin - 高保真设计稿</title>
+
+	<!-- 引入Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<!-- Tailwind 自定义主题（8px网格 + 品牌色） -->
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					fontFamily: {
+						sans: ['ui-sans-serif','system-ui','-apple-system','Inter','Segoe UI','Roboto','Helvetica Neue','Arial','Noto Sans','Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji']
+					},
+					colors: {
+						// 品牌与语义
+						kotlin: {
+							primary: '#7F52FF',     // Kotlin 紫
+							secondary: '#00D1FF',   // 活力蓝青
+							dark: '#0B1220',        // 深背景
+							surface: '#101828',     // 卡片/浮层
+							accent: '#FF7AD9',     // 点缀粉
+						},
+						semantic: {
+							success: '#10B981',
+							warning: '#F59E0B',
+							error:   '#EF4444'
+						}
+					},
+					boxShadow: {
+						soft: '0 8px 24px rgba(0,0,0,0.12)'
+					}
+				}
+			},
+			darkMode: 'class'
+		}
+	</script>
+
+	<!-- 引入Prism.js用于代码高亮 -->
+	<link href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism.min.css" rel="stylesheet" />
+
+	<!-- 引入Anime.js用于动画 -->
+	<script src="https://cdn.jsdelivr.net/npm/animejs@latest/lib/anime.min.js"></script>
+
+	<!-- 引入Font Awesome图标 -->
+	<link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+	<style>
+		/* iPhone外框样式（用于承载每个页面的 iframe） */
+		.device-frame {
+			position: relative;
+			width: 390px;   /* iPhone 14 逻辑宽度 */
+			height: 844px;  /* iPhone 14 逻辑高度 */
+			border-radius: 32px;
+			padding: 10px;
+			background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+			box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.08);
+			overflow: hidden;
+			backdrop-filter: blur(6px);
+		}
+		.device-notch {
+			position: absolute;
+			top: 8px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 180px;
+			height: 28px;
+			background: #000;
+			border-radius: 14px;
+			z-index: 2;
+		}
+		.device-screen {
+			position: absolute;
+			inset: 16px 8px 16px 8px;
+			border-radius: 24px;
+			overflow: hidden;
+			background: #000;
+		}
+		iframe {
+			width: 100%;
+			height: 100%;
+			border: 0;
+			display: block;
+		}
+		/* 8px基线辅助栅格（可开关） */
+		.grid-bg {
+			background-size: 8px 8px;
+			background-image: linear-gradient(to bottom, rgba(127,82,255,0.08) 1px, transparent 1px), linear-gradient(to right, rgba(0,209,255,0.08) 1px, transparent 1px);
+		}
+	</style>
+</head>
+
+<body class="bg-kotlin-dark text-white antialiased">
+	<!-- 顶部：品牌与主题 -->
+	<section class="relative overflow-hidden">
+		<div class="absolute inset-0 opacity-40 pointer-events-none" aria-hidden="true" style="background:
+			radial-gradient(1200px 600px at 10% 0%, rgba(127,82,255,.35), transparent 40%),
+			radial-gradient(1000px 600px at 90% 0%, rgba(0,209,255,.25), transparent 36%);">
+		</div>
+		<div class="relative max-w-7xl mx-auto px-6 pt-12 pb-10">
+			<div class="flex items-center gap-4">
+				<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-kotlin-primary via-kotlin-accent to-kotlin-secondary shadow-soft grid place-items-center">
+					<i class="fa fa-bolt text-white text-xl"></i>
+				</div>
+				<div>
+					<h1 class="text-3xl font-semibold tracking-tight">Now in Kotlin · 高保真设计稿</h1>
+					<p class="text-white/70 mt-1">提供 Kotlin 最新资讯：炉边漫谈、技术月报</p>
+				</div>
+			</div>
+
+			<!-- 色彩系统 -->
+			<div class="mt-10">
+				<h2 class="text-xl font-medium mb-4">主题色与语义色</h2>
+				<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+					<div class="rounded-xl p-4 bg-kotlin-surface/60 border border-white/10">
+						<div class="h-12 rounded-lg bg-kotlin-primary mb-3"></div>
+						<div class="text-sm font-medium">Primary</div>
+						<div class="text-xs text-white/70">#7F52FF</div>
+						<div class="text-xs text-white/60 mt-2">按钮/主操作</div>
+					</div>
+					<div class="rounded-xl p-4 bg-kotlin-surface/60 border border-white/10">
+						<div class="h-12 rounded-lg bg-kotlin-secondary mb-3"></div>
+						<div class="text-sm font-medium">Secondary</div>
+						<div class="text-xs text-white/70">#00D1FF</div>
+						<div class="text-xs text-white/60 mt-2">强调/链接</div>
+					</div>
+					<div class="rounded-xl p-4 bg-kotlin-surface/60 border border-white/10">
+						<div class="h-12 rounded-lg bg-kotlin-accent mb-3"></div>
+						<div class="text-sm font-medium">Accent</div>
+						<div class="text-xs text-white/70">#FF7AD9</div>
+						<div class="text-xs text-white/60 mt-2">装饰/渐变</div>
+					</div>
+					<div class="rounded-xl p-4 bg-kotlin-surface/60 border border-white/10">
+						<div class="h-12 rounded-lg bg-emerald-500 mb-3"></div>
+						<div class="text-sm font-medium">Success</div>
+						<div class="text-xs text-white/70">#10B981</div>
+						<div class="text-xs text-white/60 mt-2">成功反馈</div>
+					</div>
+					<div class="rounded-xl p-4 bg-kotlin-surface/60 border border-white/10">
+						<div class="h-12 rounded-lg bg-amber-500 mb-3"></div>
+						<div class="text-sm font-medium">Warning</div>
+						<div class="text-xs text-white/70">#F59E0B</div>
+						<div class="text-xs text-white/60 mt-2">警告提示</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 设计度量与网格 -->
+			<div class="mt-10 grid md:grid-cols-3 gap-6">
+				<div class="rounded-xl p-5 bg-kotlin-surface/60 border border-white/10">
+					<div class="text-sm font-medium mb-3">8px 基线网格</div>
+					<div class="grid grid-cols-8 gap-2">
+						<div class="h-8 bg-white/10 rounded"></div>
+						<div class="h-16 bg-white/10 rounded"></div>
+						<div class="h-24 bg-white/10 rounded"></div>
+						<div class="h-32 bg-white/10 rounded"></div>
+						<div class="h-8 bg-white/10 rounded"></div>
+						<div class="h-16 bg-white/10 rounded"></div>
+						<div class="h-24 bg-white/10 rounded"></div>
+						<div class="h-32 bg-white/10 rounded"></div>
+					</div>
+					<p class="text-xs text-white/60 mt-3">间距：8/16/24/32；图标：24/32/48px</p>
+				</div>
+				<div class="rounded-xl p-5 bg-kotlin-surface/60 border border-white/10">
+					<div class="text-sm font-medium mb-3">排版</div>
+					<ul class="space-y-2">
+						<li class="text-2xl">标题 H1 · 24px/32</li>
+						<li class="text-xl">标题 H2 · 20px/28</li>
+						<li class="text-lg">标题 H3 · 18px/28</li>
+						<li class="text-base text-white/80">正文字体 · 16px/24</li>
+						<li class="text-sm text-white/60">辅助文本 · 14px/20</li>
+					</ul>
+				</div>
+				<div class="rounded-xl p-5 bg-kotlin-surface/60 border border-white/10">
+					<div class="text-sm font-medium mb-3">对比度与状态</div>
+					<ul class="text-sm space-y-2 text-white/80">
+						<li>深色模式背景：#0B1220</li>
+						<li>卡片/浮层：#101828 （opacity 60%）</li>
+						<li>文本对比：主文本 ≥ 4.5:1</li>
+						<li>交互状态：默认/悬停/按下/禁用</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 原子组件库 -->
+	<section class="max-w-7xl mx-auto px-6 pb-14">
+		<h2 class="text-xl font-medium mb-4">原子组件</h2>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<!-- 按钮 -->
+			<div class="rounded-xl p-6 bg-kotlin-surface/60 border border-white/10">
+				<div class="text-sm font-medium mb-4">按钮 Buttons</div>
+				<div class="flex flex-wrap gap-4">
+					<button class="px-4 py-2 rounded-lg bg-kotlin-primary hover:brightness-110 active:brightness-95 transition shadow-soft">主按钮</button>
+					<button class="px-4 py-2 rounded-lg border border-kotlin-secondary/60 text-kotlin-secondary hover:bg-kotlin-secondary/10 transition">次按钮</button>
+					<button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 transition">幽灵按钮</button>
+					<button class="px-4 py-2 rounded-lg bg-white/5 text-white/40 cursor-not-allowed">禁用</button>
+					<button class="px-3 py-2 rounded-full bg-gradient-to-r from-kotlin-primary to-kotlin-secondary shadow-soft">
+						<i class="fa fa-play text-white"></i>
+					</button>
+				</div>
+				<p class="mt-3 text-xs text-white/60">圆角：8px；内边距：16/8；图标按钮：圆形</p>
+			</div>
+
+			<!-- 输入与搜索 -->
+			<div class="rounded-xl p-6 bg-kotlin-surface/60 border border-white/10">
+				<div class="text-sm font-medium mb-4">输入 Inputs</div>
+				<div class="flex flex-col gap-3">
+					<label class="text-xs text-white/60">搜索</label>
+					<div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus-within:border-kotlin-secondary/50">
+						<i class="fa fa-search text-white/50"></i>
+						<input placeholder="搜索节目 / 话题" class="bg-transparent outline-none placeholder:text-white/40 flex-1 text-sm">
+						<i class="fa fa-sliders text-white/40"></i>
+					</div>
+					<label class="text-xs text-white/60 mt-4">邮箱</label>
+					<input class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm outline-none focus:border-kotlin-secondary/60" placeholder="name@email.com" />
+				</div>
+			</div>
+
+			<!-- 标签/Chip与状态 -->
+			<div class="rounded-xl p-6 bg-kotlin-surface/60 border border-white/10">
+				<div class="text-sm font-medium mb-4">标签 Chips</div>
+				<div class="flex flex-wrap gap-2">
+					<span class="px-3 py-1.5 rounded-full bg-white/10 text-xs">Kotlin</span>
+					<span class="px-3 py-1.5 rounded-full bg-kotlin-secondary/15 text-kotlin-secondary text-xs">Multiplatform</span>
+					<span class="px-3 py-1.5 rounded-full bg-emerald-500/15 text-emerald-400 text-xs">Compose</span>
+					<span class="px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-400 text-xs">Coroutines</span>
+				</div>
+			</div>
+
+			<!-- 列表卡片 -->
+			<div class="rounded-xl p-6 bg-kotlin-surface/60 border border-white/10">
+				<div class="text-sm font-medium mb-4">列表卡片 Episode Card</div>
+				<div class="flex gap-4 items-center p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+					<img src="https://picsum.photos/seed/episode/96/96" class="w-16 h-16 rounded-lg object-cover" alt="episode cover" />
+					<div class="flex-1 min-w-0">
+						<div class="text-sm font-medium truncate">EP 42 · KotlinConf 新动态与路线图解析</div>
+						<div class="text-xs text-white/60 mt-1">时长 36:21 · 炉边漫谈</div>
+						<div class="flex items-center gap-2 mt-2">
+							<span class="px-2 py-0.5 rounded bg-kotlin-secondary/15 text-kotlin-secondary text-[11px]">K2</span>
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">Compose</span>
+						</div>
+					</div>
+					<button class="px-3 py-2 rounded-full bg-gradient-to-r from-kotlin-primary to-kotlin-secondary">
+						<i class="fa fa-play text-white"></i>
+					</button>
+				</div>
+			</div>
+
+			<!-- 底部标签栏 -->
+			<div class="rounded-xl p-6 bg-kotlin-surface/60 border border-white/10">
+				<div class="text-sm font-medium mb-4">底部 TabBar</div>
+				<div class="grid grid-cols-2 gap-3">
+					<div class="rounded-2xl bg-white/5 p-4">
+						<div class="flex items-center justify-around">
+							<div class="flex flex-col items-center gap-1">
+								<i class="fa fa-fire text-kotlin-secondary"></i>
+								<span class="text-xs text-kotlin-secondary">炉边漫谈</span>
+							</div>
+							<div class="flex flex-col items-center gap-1 opacity-60">
+								<i class="fa fa-newspaper-o"></i>
+								<span class="text-xs">技术月报</span>
+							</div>
+						</div>
+					</div>
+					<div class="rounded-2xl bg-white/5 p-4">
+						<div class="flex items-center justify-around">
+							<div class="flex flex-col items-center gap-1 opacity-60">
+								<i class="fa fa-fire"></i>
+								<span class="text-xs">炉边漫谈</span>
+							</div>
+							<div class="flex flex-col items-center gap-1">
+								<i class="fa fa-newspaper-o text-kotlin-secondary"></i>
+								<span class="text-xs text-kotlin-secondary">技术月报</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<p class="text-xs text-white/60 mt-3">图标 24px；可触区域 ≥ 44px；选中态使用品牌高亮</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- 页面设计：使用 iPhone 外框 + iframe -->
+	<section class="max-w-7xl mx-auto px-6 pb-20">
+		<h2 class="text-xl font-medium mb-4">页面预览</h2>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<!-- 页面一：首页 · 炉边漫谈 -->
+			<div>
+				<div class="text-sm font-medium mb-3">首页 · 炉边漫谈</div>
+				<div class="device-frame">
+					<div class="device-notch"></div>
+					<div class="device-screen">
+						<!-- 说明：srcdoc 内部也引入 Tailwind 和 Anime，实现隔离的页面视图 -->
+						<iframe title="Home - 炉边漫谈" srcdoc='
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						kotlin: { primary:"#7F52FF", secondary:"#00D1FF", dark:"#0B1220", surface:"#101828", accent:"#FF7AD9" }
+					},
+					boxShadow: { soft:"0 8px 24px rgba(0,0,0,0.12)" }
+				}
+			}
+		}
+	</script>
+	<link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<style>
+		body { background: #0B1220; color: #fff; }
+	</style>
+</head>
+<body class="font-sans">
+	<!-- 顶部导航 -->
+	<header class="sticky top-0 z-10 bg-gradient-to-b from-[#0B1220] to-transparent pt-6 pb-3 px-5">
+		<div class="flex items-center justify-between">
+			<div class="flex items-center gap-2">
+				<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-kotlin-primary via-kotlin-accent to-kotlin-secondary grid place-items-center shadow-soft">
+					<i class="fa fa-bolt text-white text-sm"></i>
+				</div>
+				<div>
+					<div class="text-sm font-medium">Now in Kotlin</div>
+					<div class="text-[11px] text-white/60">炉边漫谈</div>
+				</div>
+			</div>
+			<button class="w-9 h-9 grid place-items-center rounded-lg bg-white/10">
+				<i class="fa fa-search text-white/80"></i>
+			</button>
+		</div>
+	</header>
+
+	<!-- 头图 -->
+	<section class="px-5">
+		<div class="relative overflow-hidden rounded-2xl">
+			<img src="https://picsum.photos/seed/kotlinpod/800/600" alt="Hero" class="w-full h-44 object-cover">
+			<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+			<div class="absolute left-4 bottom-4 right-4">
+				<div class="text-xs text-white/70 mb-1">栏目</div>
+				<div class="text-lg font-semibold">炉边漫谈 · Kotlin 最新播客</div>
+				<div class="mt-2 flex gap-2">
+					<span class="px-2 py-0.5 rounded bg-kotlin-secondary/20 text-kotlin-secondary text-[11px]">每周更新</span>
+					<span class="px-2 py-0.5 rounded bg-white/15 text-[11px]">来自 podcast.kotlin.tips</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 内容列表 -->
+	<main class="mt-4 pb-20">
+		<ul class="space-y-2 px-3">
+			<!-- 列表项 -->
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<img src="https://picsum.photos/seed/ep1/200/200" alt="ep1" class="w-16 h-16 object-cover rounded-xl">
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">EP 43 · 2025-01-07</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">K2 编译器进展与 Kotlin 2.1 的稳定特性</div>
+						<div class="mt-1 text-[12px] text-white/50">时长 28:14 · 炉边漫谈</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-kotlin-secondary/15 text-kotlin-secondary text-[11px]">K2</span>
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">Gradle</span>
+						</div>
+					</div>
+					<button aria-label="Play" class="self-center w-9 h-9 rounded-full bg-gradient-to-r from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<i class="fa fa-play text-white text-sm"></i>
+					</button>
+				</a>
+			</li>
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<img src="https://picsum.photos/seed/ep2/200/200" alt="ep2" class="w-16 h-16 object-cover rounded-xl">
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">EP 42 · 2024-12-24</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Jetpack Compose 性能优化与常见陷阱</div>
+						<div class="mt-1 text-[12px] text-white/50">时长 36:21 · 炉边漫谈</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[11px]">Compose</span>
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">UI</span>
+						</div>
+					</div>
+					<button aria-label="Play" class="self-center w-9 h-9 rounded-full bg-gradient-to-r from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<i class="fa fa-play text-white text-sm"></i>
+					</button>
+				</a>
+			</li>
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<img src="https://picsum.photos/seed/ep3/200/200" alt="ep3" class="w-16 h-16 object-cover rounded-xl">
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">EP 41 · 2024-12-10</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin Multiplatform 实战与生态观察</div>
+						<div class="mt-1 text-[12px] text-white/50">时长 41:02 · 炉边漫谈</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-kotlin-secondary/15 text-kotlin-secondary text-[11px]">KMP</span>
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">Tooling</span>
+						</div>
+					</div>
+					<button aria-label="Play" class="self-center w-9 h-9 rounded-full bg-gradient-to-r from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<i class="fa fa-play text-white text-sm"></i>
+					</button>
+				</a>
+			</li>
+		</ul>
+	</main>
+
+	<!-- 底部标签栏 -->
+	<nav class="fixed bottom-0 inset-x-0 border-t border-white/10 bg-[#0B1220]/90 backdrop-blur px-8 py-2">
+		<div class="flex items-center justify-around">
+			<button class="flex flex-col items-center gap-1">
+				<i class="fa fa-fire text-kotlin-secondary"></i>
+				<span class="text-[11px] text-kotlin-secondary">炉边漫谈</span>
+			</button>
+			<button class="flex flex-col items-center gap-1 opacity-70">
+				<i class="fa fa-newspaper-o"></i>
+				<span class="text-[11px]">技术月报</span>
+			</button>
+		</div>
+	</nav>
+</body>
+</html>'></iframe>
+					</div>
+				</div>
+			</div>
+
+			<!-- 页面二：音频播放（播放器样式） -->
+			<div>
+				<div class="text-sm font-medium mb-3">详情 · 音频播放器</div>
+				<div class="device-frame">
+					<div class="device-notch"></div>
+					<div class="device-screen">
+						<iframe title="Episode - 播放器" srcdoc='
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						kotlin: { primary:"#7F52FF", secondary:"#00D1FF", dark:"#0B1220", surface:"#101828", accent:"#FF7AD9" }
+					},
+					boxShadow: { soft:"0 8px 24px rgba(0,0,0,0.12)" }
+				}
+			}
+		}
+	</script>
+	<link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+	<style>
+		body { background: radial-gradient(1000px 600px at 50% -10%, rgba(127,82,255,.26), transparent 40%), #0B1220; color: #fff; }
+		.eq-bar { width: 6px; border-radius: 3px; background: linear-gradient(180deg, #00D1FF, #7F52FF); }
+	</style>
+</head>
+<body class="font-sans">
+	<!-- 顶部返回与标题 -->
+	<header class="px-4 pt-6 pb-2 flex items-center justify-between">
+		<button class="w-9 h-9 grid place-items-center rounded-lg bg-white/10">
+			<i class="fa fa-chevron-left text-white/80"></i>
+		</button>
+		<div class="text-sm text-white/70">正在播放</div>
+		<button class="w-9 h-9 grid place-items-center rounded-lg bg-white/10">
+			<i class="fa fa-ellipsis-h text-white/80"></i>
+		</button>
+	</header>
+
+	<!-- 封面 -->
+	<section class="px-6 mt-2">
+		<div class="relative rounded-3xl overflow-hidden shadow-soft">
+			<img src="https://picsum.photos/seed/cover/800/800" alt="cover" class="w-full h-72 object-cover">
+			<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+			<div class="absolute right-3 bottom-3">
+				<div class="flex items-end gap-1 h-8">
+					<div class="eq-bar h-3" id="bar1"></div>
+					<div class="eq-bar h-5" id="bar2"></div>
+					<div class="eq-bar h-2" id="bar3"></div>
+					<div class="eq-bar h-6" id="bar4"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 标题与描述 -->
+	<section class="px-6 mt-5">
+		<h1 class="text-lg font-semibold leading-7">K2 编译器进展与 Kotlin 2.1 的稳定特性</h1>
+		<p class="text-[13px] text-white/70 mt-1">EP 43 · 炉边漫谈 · 28:14</p>
+		<div class="mt-3 flex gap-2">
+			<span class="px-2 py-0.5 rounded bg-kotlin-secondary/15 text-kotlin-secondary text-[11px]">K2</span>
+			<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">Gradle</span>
+		</div>
+	</section>
+
+	<!-- 进度条与时间 -->
+	<section class="px-6 mt-5">
+		<input id="seek" type="range" min="0" max="100" value="20" class="w-full accent-[#7F52FF]">
+		<div class="flex justify-between text-[11px] text-white/60 mt-1">
+			<span id="cur">09:13</span>
+			<span id="dur">28:14</span>
+		</div>
+	</section>
+
+	<!-- 播放控制 -->
+	<section class="px-6 mt-4">
+		<div class="flex items-center justify-between">
+			<button class="px-3 py-2 rounded-lg bg-white/10 text-sm">1x</button>
+			<div class="flex items-center gap-4">
+				<button class="w-12 h-12 grid place-items-center rounded-full bg-white/10">
+					<i class="fa fa-step-backward text-white text-lg"></i>
+				</button>
+				<button id="playBtn" class="relative w-16 h-16 grid place-items-center rounded-full bg-gradient-to-r from-kotlin-primary to-kotlin-secondary shadow-soft">
+					<i id="playIcon" class="fa fa-pause text-white text-xl"></i>
+					<span id="pulse" class="pointer-events-none absolute inset-0 rounded-full"></span>
+				</button>
+				<button class="w-12 h-12 grid place-items-center rounded-full bg-white/10">
+					<i class="fa fa-step-forward text-white text-lg"></i>
+				</button>
+			</div>
+			<button class="w-10 h-10 grid place-items-center rounded-full bg-white/10">
+				<i class="fa fa-bookmark-o text-white"></i>
+			</button>
+		</div>
+	</section>
+
+	<!-- 节目内容介绍 -->
+	<section class="px-6 mt-6 pb-8">
+		<div class="text-sm text-white/70 mb-3">节目介绍</div>
+		<div class="rounded-xl bg-white/5 p-4">
+			<div class="text-sm font-medium text-white/90 mb-3">《Kotlin 爐邊漫談》</div>
+			<div class="text-[13px] text-white/70 leading-relaxed space-y-3">
+				<p>是一個討論 Kotlin 相關主題的中文 Podcast，由 Android GDE 禹昂、Kotlin 開發者 Maggie 和 JetBrains 技術傳教士聖佑共同主持，除了介紹兩岸三地 Kotlin User Group 技術社群活動資訊外，還會邀請各地 Kotlin 開發者一起來聊聊 Kotlin 的應用情境。</p>
+				
+				<div class="border-l-2 border-kotlin-secondary/30 pl-3 my-3">
+					<div class="text-xs text-kotlin-secondary font-medium mb-2">本集來賓</div>
+					<div class="text-[12px] text-white/60 space-y-1">
+						<div>• Android GDE & Koin Community Lead - El Zhang (AB)</div>
+						<div>• 美團資深行動裝置開發工程師 - 劉銀龍</div>
+						<div>• 瑞典隆德大學碩士在校生 - 李卓軒</div>
+					</div>
+				</div>
+				
+				<p>2024 年由於主持群過於忙碌，令《Kotlin 爐邊漫談》停更許久，但大家別擔心，節目現已重新回歸。在新集數發表前，我們先來為今年的 KotlinConf 大會熱身。本集是在去年大會現場錄製的 KotlinConf'24 現場番外篇，陣容意外龐大，除了兩位節目主持人外，還邀請到節目的老朋友 AB、美團資深開發工程師銀龍及人在瑞典念書的年輕開發者卓軒，一起在丹麥哥本哈根大會現場錄製本集節目。</p>
+				
+				<p>一眾人不僅分享了在大會現場學習到的新知識，認識新朋友的故事，還有北歐的飲食、環境、文化等許多有意思的話題。如今正值 2025 KotlinConf 大會召開前夕，大家不妨透過本集特別篇的內容，回顧 KotlinConf 2024 大會的精彩瞬間。</p>
+			</div>
+			
+			<div class="mt-4 pt-3 border-t border-white/10">
+				<div class="text-xs text-white/50 space-y-1">
+					<div>其他收視/聽平台：https://open.firstory.me/user/kotlin-fireside-chats/platforms</div>
+					<div>意見回饋：podcast@kotlin.tips</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 底部标签栏（保持一致） -->
+	<nav class="fixed bottom-0 inset-x-0 border-t border-white/10 bg-[#0B1220]/90 backdrop-blur px-8 py-2">
+		<div class="flex items-center justify-around">
+			<button class="flex flex-col items-center gap-1 opacity-70">
+				<i class="fa fa-fire"></i>
+				<span class="text-[11px]">炉边漫谈</span>
+			</button>
+			<button class="flex flex-col items-center gap-1">
+				<i class="fa fa-newspaper-o text-kotlin-secondary"></i>
+				<span class="text-[11px] text-kotlin-secondary">技术月报</span>
+			</button>
+		</div>
+	</nav>
+
+	<script>
+		// 播放键微动效 + 等化器动画（示意）
+		const pulseEl = document.getElementById("pulse");
+		let playing = true;
+
+		function doPulse() {
+			anime({
+				targets: pulseEl,
+				scale: [1, 1.35],
+				opacity: [0.25, 0],
+				easing: "easeOutCubic",
+				duration: 1000,
+				complete: () => { pulseEl.style.transform = "scale(1)"; pulseEl.style.opacity = 0.25; if (playing) doPulse(); }
+			});
+		}
+		doPulse();
+
+		const bars = ["#bar1","#bar2","#bar3","#bar4"].map(id => document.querySelector(id));
+		function playEq() {
+			bars.forEach((bar, i) => {
+				anime({
+					targets: bar,
+					height: [12 + i*4, 28 - i*2],
+					direction: "alternate",
+					loop: true,
+					easing: "easeInOutSine",
+					duration: 500 + i*120
+				});
+			});
+		}
+		playEq();
+
+		document.getElementById("playBtn").addEventListener("click", () => {
+			playing = !playing;
+			document.getElementById("playIcon").className = playing ? "fa fa-pause text-white text-xl" : "fa fa-play text-white text-xl";
+			if (playing) doPulse();
+		});
+	</script>
+</body>
+</html>'></iframe>
+					</div>
+				</div>
+			</div>
+
+			<!-- 页面三：技术月报 -->
+			<div>
+				<div class="text-sm font-medium mb-3">技术月报 · Kotlin 技术资讯</div>
+				<div class="device-frame">
+					<div class="device-notch"></div>
+					<div class="device-screen">
+						<iframe title="技术月报 - Kotlin 技术资讯" srcdoc='
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						kotlin: { primary:"#7F52FF", secondary:"#00D1FF", dark:"#0B1220", surface:"#101828", accent:"#FF7AD9" }
+					},
+					boxShadow: { soft:"0 8px 24px rgba(0,0,0,0.12)" }
+				}
+			}
+		}
+	</script>
+	<link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<style>
+		body { background: #0B1220; color: #fff; }
+	</style>
+</head>
+<body class="font-sans">
+	<!-- 顶部导航 -->
+	<header class="sticky top-0 z-10 bg-gradient-to-b from-[#0B1220] to-transparent pt-6 pb-3 px-5">
+		<div class="flex items-center justify-between">
+			<div class="flex items-center gap-2">
+				<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-kotlin-primary via-kotlin-accent to-kotlin-secondary grid place-items-center shadow-soft">
+					<i class="fa fa-newspaper-o text-white text-sm"></i>
+				</div>
+				<div>
+					<div class="text-sm font-medium">Now in Kotlin</div>
+					<div class="text-[11px] text-white/60">技术月报</div>
+				</div>
+			</div>
+			<button class="w-9 h-9 grid place-items-center rounded-lg bg-white/10">
+				<i class="fa fa-calendar text-white/80"></i>
+			</button>
+		</div>
+	</header>
+
+	<!-- 头图 -->
+	<section class="px-5">
+		<div class="relative overflow-hidden rounded-2xl">
+			<img src="https://picsum.photos/seed/kotlintech/800/600" alt="Kotlin Tech Reports" class="w-full h-44 object-cover">
+			<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+			<div class="absolute left-4 bottom-4 right-4">
+				<div class="text-xs text-white/70 mb-1">栏目</div>
+				<div class="text-lg font-semibold">Kotlin 技术月报</div>
+				<div class="mt-2 flex gap-2">
+					<span class="px-2 py-0.5 rounded bg-kotlin-secondary/20 text-kotlin-secondary text-[11px]">每月更新</span>
+					<span class="px-2 py-0.5 rounded bg-white/15 text-[11px]">来自 北京 KUG</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 技术月报列表 -->
+	<main class="mt-4 pb-20">
+		<ul class="space-y-2 px-3">
+			<!-- 2025年月报 -->
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2025<br/>07</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2025年7月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2025 年 7 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-kotlin-secondary/15 text-kotlin-secondary text-[11px]">最新</span>
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">2025</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+			
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2025<br/>06</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2025年6月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2025 年 6 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">2025</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2025<br/>05</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2025年5月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2025 年 5 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">2025</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-primary to-kotlin-secondary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2025<br/>04</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2025年4月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2025 年 4 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-white/10 text-[11px]">2025</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<!-- 2024年月报 -->
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-accent to-kotlin-primary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2024<br/>12</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2024年12月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2024 年 12 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[11px]">2024</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-accent to-kotlin-primary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2024<br/>11</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2024年11月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2024 年 11 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[11px]">2024</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-kotlin-accent to-kotlin-primary grid place-items-center shadow-soft">
+						<div class="text-white text-xs font-semibold">2024<br/>10</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2024年10月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2024 年 10 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[11px]">2024</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<!-- 2023年月报 -->
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-white/20 to-white/10 grid place-items-center">
+						<div class="text-white text-xs font-semibold">2023<br/>12</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2023年12月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2023 年 12 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-white/15 text-white/70 text-[11px]">2023</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+
+			<li class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-[0.99] transition">
+				<a href="#" class="flex gap-3">
+					<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-white/20 to-white/10 grid place-items-center">
+						<div class="text-white text-xs font-semibold">2023<br/>11</div>
+					</div>
+					<div class="flex-1 min-w-0">
+						<div class="text-[13px] text-white/60">2023年11月30日</div>
+						<div class="text-sm font-medium leading-5 line-clamp-2">Kotlin 技术月报 | 2023 年 11 月</div>
+						<div class="mt-1 text-[12px] text-white/50">北京 KUG · 技术月报</div>
+						<div class="mt-2 flex gap-2">
+							<span class="px-2 py-0.5 rounded bg-white/15 text-white/70 text-[11px]">2023</span>
+						</div>
+					</div>
+					<button aria-label="Read" class="self-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 grid place-items-center">
+						<i class="fa fa-chevron-right text-white/80 text-sm"></i>
+					</button>
+				</a>
+			</li>
+		</ul>
+
+		<!-- 加载更多提示 -->
+		<div class="px-5 mt-6">
+			<div class="text-center">
+				<button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-sm text-white/80 transition">
+					加载更多月报
+				</button>
+			</div>
+		</div>
+	</main>
+
+	<!-- 底部标签栏 -->
+	<nav class="fixed bottom-0 inset-x-0 border-t border-white/10 bg-[#0B1220]/90 backdrop-blur px-8 py-2">
+		<div class="flex items-center justify-around">
+			<button class="flex flex-col items-center gap-1 opacity-70">
+				<i class="fa fa-fire"></i>
+				<span class="text-[11px]">炉边漫谈</span>
+			</button>
+			<button class="flex flex-col items-center gap-1">
+				<i class="fa fa-newspaper-o text-kotlin-secondary"></i>
+				<span class="text-[11px] text-kotlin-secondary">技术月报</span>
+			</button>
+		</div>
+	</nav>
+</body>
+</html>'></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开发说明与可交互要点 -->
+		<div class="mt-10 rounded-2xl bg-kotlin-surface/60 border border-white/10 p-6">
+			<div class="text-sm font-medium mb-2">实现说明</div>
+			<ul class="text-sm text-white/70 space-y-1">
+				<li>· 采用 8px 基线网格，主要间距：8/16/24/32。</li>
+				<li>· 暗色主题为默认，保证文本与背景对比度 ≥ 4.5:1。</li>
+				<li>· 列表项可点击进入播放器页面；播放器提供播放、暂停、快进/后退、倍速、收藏等操作。</li>
+				<li>· 头图与封面使用 Picsum 占位，可替换为实际播客封面。</li>
+				<li>· 底部 TabBar 包含「炉边漫谈」「技术月报」；当前版本月报页面为占位。</li>
+				<li>· 动效使用 Anime.js：播放键脉冲、等化器律动，响应轻微交互反馈。</li>
+			</ul>
+		</div>
+	</section>
+
+	<!-- 页脚 -->
+	<footer class="py-10 text-center text-white/50 text-sm">
+		Now in Kotlin · Design System · 2025
+	</footer>
+</body>
+</html>

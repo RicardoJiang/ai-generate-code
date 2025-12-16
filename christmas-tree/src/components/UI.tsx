@@ -3,19 +3,20 @@ import { useStore } from '../store'
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision'
 
 const UI = () => {
-  const { 
-    interactionState, 
-    toggleInteractionState, 
+  const {
+    interactionState,
+    toggleInteractionState,
     setInteractionState,
     setHandPosition,
     setHandDetected,
     setHandRotation
   } = useStore()
-  
+
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const handLandmarkerRef = useRef<HandLandmarker | null>(null)
   const lastVideoTimeRef = useRef(-1)
   const animationFrameRef = useRef<number>()
