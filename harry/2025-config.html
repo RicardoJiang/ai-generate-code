@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 堡垒计划：防御性全天候策略指南</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #e2e8f0; /* Slate 200 */
+        }
+
+        .card-gradient {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+        }
+
+        .highlight-text {
+            background: linear-gradient(90deg, #fbbf24 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+        .asset-card {
+            transition: all 0.3s ease;
+        }
+        .asset-card:hover {
+            transform: translateY(-5px);
+            border-color: #fbbf24;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+    <!-- 
+    Application Structure:
+    1. Hero: Strategy Philosophy (Dalio x Browne Fusion).
+    2. The Core Allocation: Interactive Doughnut Chart (30/25/25/15/5).
+    3. Execution Guide (China Context): Specific ETF codes and rationale cards.
+    4. Bond Strategy Deep Dive: The "Barbell" approach (Long vs Short).
+    5. The "Southbound Upgrade": Comparison table for qualified investors.
+    6. Risk Warning: The "Fixed Income+" Trap.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-shield-check text-amber-400 text-2xl"></i>
+                <span class="font-bold text-xl tracking-tight text-white">2025 堡垒计划</span>
+            </div>
+            <div class="hidden md:flex space-x-6 text-sm font-medium text-slate-400">
+                <a href="#allocation" class="hover:text-amber-400 transition">核心配置</a>
+                <a href="#execution" class="hover:text-amber-400 transition">实操代码</a>
+                <a href="#upgrade" class="hover:text-amber-400 transition">南向通升级</a>
+                <a href="#warning" class="hover:text-red-400 transition">避坑指南</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        
+        <!-- Hero Section -->
+        <section class="relative py-20 overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-amber-400 text-xs font-bold mb-6">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    针对 2025 宏观范式定制
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+                    融合达利欧与布朗的<br>
+                    <span class="highlight-text">终极防御全天候</span>
+                </h1>
+                <p class="text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+                    在赤字高悬、通胀粘性与地缘摩擦的 2025 年，我们摒弃了传统的“股六债四”，
+                    构建了一个<strong>进可攻（股票/商品）、退可守（短债）、防崩盘（长债/黄金）</strong>的哑铃型防御堡垒。
+                </p>
+            </div>
+            <!-- Background Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-900/20 blur-[100px] rounded-full -z-10"></div>
+        </section>
+
+        <!-- Allocation Section -->
+        <section id="allocation" class="py-12 bg-slate-800/50 border-y border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <!-- Chart -->
+                    <div class="relative">
+                        <div class="chart-container">
+                            <canvas id="allocationChart"></canvas>
+                        </div>
+                        <!-- Center Text -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+                            <div class="text-3xl font-bold text-white">100%</div>
+                            <div class="text-xs text-slate-400">全天候配置</div>
+                        </div>
+                    </div>
+
+                    <!-- Logic Explanation -->
+                    <div class="space-y-6">
+                        <h2 class="text-3xl font-bold text-white">配置逻辑解析</h2>
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-xl bg-slate-800 border-l-4 border-blue-500">
+                                <h3 class="font-bold text-blue-400">30% 股票 (全球增长)</h3>
+                                <p class="text-sm text-slate-400">保留进攻性。中美混搭（沪深300 + 标普500），防止单一市场踏空，捕捉经济软着陆红利。</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-800 border-l-4 border-emerald-500">
+                                <h3 class="font-bold text-emerald-400">50% 哑铃型债券</h3>
+                                <p class="text-sm text-slate-400">
+                                    <strong>25% 长债 (防守)</strong>：赌通缩和衰退，利用久期爆发力救命。<br>
+                                    <strong>25% 短债 (压舱)</strong>：吃高息，作为“干火药”应对流动性危机。
+                                </p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-800 border-l-4 border-amber-500">
+                                <h3 class="font-bold text-amber-400">20% 硬资产 (抗通胀)</h3>
+                                <p class="text-sm text-slate-400">
+                                    <strong>15% 黄金</strong>：对抗信用法币危机和汇率风险。<br>
+                                    <strong>5% 能源商品</strong>：利用油气股的高股息和通胀敏感性，对冲供给侧通胀。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Execution Guide (China Context) -->
+        <section id="execution" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-white mb-4">🇨🇳 中国投资者落地指南</h2>
+                    <p class="text-slate-400">无需复杂的海外账户，利用 A 股 ETF 构建完美替代方案。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <!-- Stock -->
+                    <div class="asset-card card-gradient p-6 rounded-xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <i class="ph-fill ph-trend-up text-blue-500 text-3xl"></i>
+                            <span class="text-xs font-bold bg-blue-500/10 text-blue-400 px-2 py-1 rounded">30%</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">股票部分</h3>
+                        <p class="text-xs text-slate-500 mb-4">中美双引擎</p>
+                        <div class="space-y-2">
+                            <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                                <div class="text-xs text-slate-400">中国核心</div>
+                                <div class="font-mono text-white font-bold">510300</div>
+                                <div class="text-[10px] text-slate-500">沪深300 ETF</div>
+                            </div>
+                            <div class="bg-slate-800 p-2 rounded border border-slate-700">
+                                <div class="text-xs text-slate-400">美国核心(QDII)</div>
+                                <div class="font-mono text-white font-bold">513500</div>
+                                <div class="text-[10px] text-slate-500">标普500 ETF</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Long Bond -->
+                    <div class="asset-card card-gradient p-6 rounded-xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <i class="ph-fill ph-chart-line-down text-emerald-500 text-3xl"></i>
+                            <span class="text-xs font-bold bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">25%</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">长期国债</h3>
+                        <p class="text-xs text-slate-500 mb-4">防通缩/衰退</p>
+                        <div class="bg-slate-800 p-2 rounded border border-slate-700 h-full flex flex-col justify-center">
+                            <div class="text-xs text-slate-400">目前唯一长债ETF</div>
+                            <div class="font-mono text-white font-bold text-xl">511090</div>
+                            <div class="text-[10px] text-slate-500">30年国债 ETF</div>
+                            <div class="mt-2 text-[10px] text-emerald-400">替代美债TLT</div>
+                        </div>
+                    </div>
+
+                    <!-- Short Bond -->
+                    <div class="asset-card card-gradient p-6 rounded-xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <i class="ph-fill ph-anchor text-slate-400 text-3xl"></i>
+                            <span class="text-xs font-bold bg-slate-500/10 text-slate-300 px-2 py-1 rounded">25%</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">短债/现金</h3>
+                        <p class="text-xs text-slate-500 mb-4">干火药/稳定器</p>
+                        <div class="bg-slate-800 p-2 rounded border border-slate-700 h-full flex flex-col justify-center">
+                            <div class="text-xs text-slate-400">场内T+0</div>
+                            <div class="font-mono text-white font-bold text-xl">511220</div>
+                            <div class="text-[10px] text-slate-500">海富通短融 ETF</div>
+                            <div class="mt-2 text-[10px] text-slate-400">或 余额宝/朝朝宝</div>
+                        </div>
+                    </div>
+
+                    <!-- Gold -->
+                    <div class="asset-card card-gradient p-6 rounded-xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <i class="ph-fill ph-coin text-amber-400 text-3xl"></i>
+                            <span class="text-xs font-bold bg-amber-500/10 text-amber-400 px-2 py-1 rounded">15%</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">黄金</h3>
+                        <p class="text-xs text-slate-500 mb-4">防信用危机/汇率</p>
+                        <div class="bg-slate-800 p-2 rounded border border-slate-700 h-full flex flex-col justify-center">
+                            <div class="text-xs text-slate-400">流动性最好</div>
+                            <div class="font-mono text-white font-bold text-xl">518880</div>
+                            <div class="text-[10px] text-slate-500">黄金 ETF</div>
+                            <div class="mt-2 text-[10px] text-amber-400">对冲人民币贬值</div>
+                        </div>
+                    </div>
+
+                    <!-- Commodities -->
+                    <div class="asset-card card-gradient p-6 rounded-xl border-orange-500/30">
+                        <div class="flex justify-between items-start mb-4">
+                            <i class="ph-fill ph-drop text-orange-500 text-3xl"></i>
+                            <span class="text-xs font-bold bg-orange-500/10 text-orange-400 px-2 py-1 rounded">5%</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">大宗商品</h3>
+                        <p class="text-xs text-slate-500 mb-4">防意外通胀</p>
+                        <div class="bg-slate-800 p-2 rounded border border-slate-700 h-full flex flex-col justify-center">
+                            <div class="text-xs text-slate-400">优于期货基金</div>
+                            <div class="font-mono text-white font-bold text-xl">561360</div>
+                            <div class="text-[10px] text-slate-500">油气 ETF</div>
+                            <div class="mt-2 text-[10px] text-orange-400">高股息+抗通胀</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Southbound Upgrade -->
+        <section id="upgrade" class="py-16 bg-slate-800/30 border-y border-slate-800">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-10">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                            <i class="ph-fill ph-airplane-takeoff text-amber-400"></i> 南向通进阶版
+                        </h2>
+                        <p class="text-slate-400 text-sm">
+                            如果您拥有大湾区户籍/社保，可通过“跨境理财通”购买美元债，构建真正的全球防御体系。
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0 bg-blue-600/20 px-4 py-2 rounded-lg border border-blue-500/50">
+                        <span class="text-blue-400 text-xs font-bold">收益率质变：2.2% ➔ 4.8%</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-slate-400">
+                        <thead class="text-xs text-slate-300 uppercase bg-slate-700/50">
+                            <tr>
+                                <th class="px-6 py-3 rounded-tl-lg">资产类别</th>
+                                <th class="px-6 py-3">原中国版配置</th>
+                                <th class="px-6 py-3 bg-blue-900/20 border-b-2 border-blue-500">南向通升级版 (推荐)</th>
+                                <th class="px-6 py-3 rounded-tr-lg">升级优势</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700 bg-slate-800/50">
+                            <tr>
+                                <td class="px-6 py-4 font-bold text-white">长期国债 (25%)</td>
+                                <td class="px-6 py-4">100% 中国30年国债</td>
+                                <td class="px-6 py-4 bg-blue-900/10 font-bold text-white">12.5% 中国30年 + 12.5% 美元长债基金</td>
+                                <td class="px-6 py-4 text-emerald-400">同时防御中美衰退，票息翻倍</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold text-white">短债/现金 (25%)</td>
+                                <td class="px-6 py-4">100% 人民币理财/短融</td>
+                                <td class="px-6 py-4 bg-blue-900/10 font-bold text-white">12.5% 人民币短融 + 12.5% 美元存款</td>
+                                <td class="px-6 py-4 text-emerald-400">无风险赚取美元高息差</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold text-white">风险对冲</td>
+                                <td class="px-6 py-4">依靠黄金对冲汇率</td>
+                                <td class="px-6 py-4 bg-blue-900/10">组合内部自然对冲 (人民币涨A股涨，美元涨美债赚)</td>
+                                <td class="px-6 py-4 text-amber-400">更低波动，更稳心态</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Warnings -->
+        <section id="warning" class="py-16">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="bg-red-900/20 border border-red-500/50 rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="ph-fill ph-warning text-9xl text-red-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-red-400 mb-6 flex items-center gap-2">
+                        <i class="ph-fill ph-prohibit"></i> 绝对禁区 (避坑指南)
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-white mb-2">❌ 严禁“固收+”理财</h3>
+                            <p class="text-sm text-slate-300">
+                                永远不要在 25% 的短债仓位里买“固收+”或“二级债基”。它们含有股票风险，会破坏防御属性。请认准<strong>“纯债”、“短债”、“现金管理类”</strong>字样。
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white mb-2">❌ 严禁期货类原油基金</h3>
+                            <p class="text-sm text-slate-300">
+                                不要长期持有如<strong>南方原油 (006476)</strong> 等 QDII-FOF。期货的<strong>移仓损耗 (Roll Yield)</strong> 会在长期持有中吃掉你的本金。请使用股票型 ETF (561360) 替代。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 border-t border-slate-800 py-10 text-center">
+        <p class="text-slate-500 text-xs mb-2">基于 2025 年“新范式”宏观分析生成 | 投资有风险，入市需谨慎</p>
+        <p class="text-slate-600 text-[10px]">策略来源：瑞·达利欧全天候策略 & 哈利·布朗永久组合之融合改良版</p>
+    </footer>
+
+    <script>
+        // Chart Configuration
+        const ctx = document.getElementById('allocationChart').getContext('2d');
+        
+        // Colors
+        const colors = {
+            stock: '#3b82f6', // Blue 500
+            longBond: '#10b981', // Emerald 500
+            shortBond: '#64748b', // Slate 500
+            gold: '#fbbf24', // Amber 400
+            commodity: '#f97316' // Orange 500
+        };
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    '股票 30% (中美混搭)', 
+                    '长期国债 25% (防衰退)', 
+                    '短债/现金 25% (干火药)', 
+                    '黄金 15% (防信用危机)', 
+                    '大宗商品 5% (防通胀)'
+                ],
+                datasets: [{
+                    data: [30, 25, 25, 15, 5],
+                    backgroundColor: [
+                        colors.stock,
+                        colors.longBond,
+                        colors.shortBond,
+                        colors.gold,
+                        colors.commodity
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { family: "'Noto Sans SC', sans-serif", size: 12 },
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#fff',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8,
+                        borderColor: 'rgba(51, 65, 85, 0.5)',
+                        borderWidth: 1
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
