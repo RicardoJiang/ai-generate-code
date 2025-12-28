@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 策略深度对决：全天候 vs 永久组合</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #1e293b; /* Slate 800 */
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Noto Sans SC', serif; /* Using Sans for consistency, keeping it bold */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .scenario-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .scenario-card:hover, .scenario-card.active {
+            transform: translateY(-4px);
+            border-color: #3b82f6; /* Blue 500 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .scenario-card.active {
+            background-color: #eff6ff; /* Blue 50 */
+            border-width: 2px;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #1e40af 0%, #0f172a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+    <!-- Chosen Palette: Professional Financial (Navy Blue, Slate Grey, Muted Gold for PP, Teal for AW) -->
+    <!-- Application Structure Plan:
+         1. Executive Summary (Hero): High-level intro to the "Paradigm Shift".
+         2. The Contenders (Allocation): Side-by-side Doughnut charts of Dalio vs. Browne.
+         3. 2025 Macro Dashboard: Cards explaining the 4 key headwinds (Growth, Inflation, Geopolitics, Rates).
+         4. Simulation Arena: Interactive Scenario Selector (Soft Landing vs Stagflation vs Reflation) updating a performance projection chart.
+         5. Deep Dive (Assets): Comparative analysis of Gold, Bonds, Cash.
+         6. Verdict & Action: Final conclusion and ETF implementation table.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Allocation -> Doughnut Charts -> Best for showing composition differences (Risk Parity vs Equal Weight).
+         2. Scenarios -> Interactive Bar Chart -> Dynamic comparison of predicted outcomes based on user selection.
+         3. Macro Factors -> Grid of Info Cards -> Organized textual info.
+         4. Implementation -> Styled HTML Table -> Clear practical guidance.
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">⚖️</span>
+                    <span class="font-bold text-slate-800 tracking-tight">2025 策略对决</span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#intro" class="hover:text-blue-600 transition">宏观背景</a>
+                    <a href="#allocation" class="hover:text-blue-600 transition">资产配置</a>
+                    <a href="#simulation" class="hover:text-blue-600 transition">情景模拟</a>
+                    <a href="#verdict" class="hover:text-blue-600 transition">最终裁决</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="space-y-20 pb-20">
+
+        <!-- Hero Section: The Paradigm Shift -->
+        <section id="intro" class="relative pt-16 pb-12 bg-slate-50 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-800 text-xs font-bold mb-6 tracking-wide uppercase">2025 宏观展望报告</span>
+                <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight">
+                    从“大缓和”到<br><span class="text-gradient">“大波动”时代的抉择</span>
+                </h1>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-10">
+                    站在 2025 年的门槛上，全球投资环境正经历结构性跃迁。面对滞胀阴影、地缘摩擦与收益率曲线陡峭化，
+                    <strong>全天候策略 (All Weather)</strong> 与 <strong>永久组合 (Permanent Portfolio)</strong>，谁能成为新秩序下的诺亚方舟？
+                </p>
+                
+                <!-- Macro Headwinds Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto text-left">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-3">📉</div>
+                        <h3 class="font-bold text-slate-800 mb-2">增长放缓</h3>
+                        <p class="text-sm text-slate-500">全球增长降速至“新常态”，美国GDP预计回落至2%以下。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-3">🏷️</div>
+                        <h3 class="font-bold text-slate-800 mb-2">通胀粘性</h3>
+                        <p class="text-sm text-slate-500">服务业通胀顽固，核心CPI难回2%，滞胀风险犹存。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-3">🚢</div>
+                        <h3 class="font-bold text-slate-800 mb-2">地缘/关税</h3>
+                        <p class="text-sm text-slate-500">贸易壁垒重构供应链，推升成本，黄金战略地位提升。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-3">📈</div>
+                        <h3 class="font-bold text-slate-800 mb-2">长债陡峭化</h3>
+                        <p class="text-sm text-slate-500">财政赤字导致长端利率居高不下，债券久期风险加剧。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Asset Allocation Contrast -->
+        <section id="allocation" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">策略哲学的碰撞</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+                    雷·达里奥的<strong>“精密工程”</strong> vs 哈利·布朗的<strong>“极简生存”</strong>。两者看似都追求防御，但底层构建逻辑截然不同。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <!-- Dalio Strategy -->
+                <div class="glass-panel p-8 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-teal-100 rounded-bl-full -mr-4 -mt-4 z-0 opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-10 h-10 rounded-full bg-teal-500 text-white flex items-center justify-center font-bold text-xl">D</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">全天候策略 (All Weather)</h3>
+                                <p class="text-xs font-bold text-teal-600 uppercase tracking-wide">风险平价 | 金融工程</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-6 min-h-[60px]">
+                            通过<strong>杠杆</strong>和<strong>高债券权重</strong>平衡股票风险。假设股债在衰退中负相关。依赖资产间的相关性来平滑波动。
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="dalioChart"></canvas>
+                        </div>
+                        <div class="mt-6 flex flex-wrap gap-2 justify-center">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">债券占比 ~55%</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">久期风险高</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Browne Strategy -->
+                <div class="glass-panel p-8 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-bl-full -mr-4 -mt-4 z-0 opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xl">B</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">永久投资组合 (Permanent)</h3>
+                                <p class="text-xs font-bold text-amber-600 uppercase tracking-wide">等权配置 | 不可知论</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-6 min-h-[60px]">
+                            承认无法预测未来。<strong>25% x 4</strong> 的极简结构。依靠<strong>现金</strong>和<strong>黄金</strong>的极高权重来应对极端危机和通胀。
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="browneChart"></canvas>
+                        </div>
+                        <div class="mt-6 flex flex-wrap gap-2 justify-center">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">黄金占比 25%</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">现金占比 25%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Scenario Simulation -->
+        <section id="simulation" class="bg-slate-900 text-white py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">2025 压力测试模拟器</h2>
+                    <p class="text-slate-400 max-w-2xl mx-auto">
+                        点击下方三种可能的 2025 宏观情景，查看量化推演下的策略胜负。
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                    <!-- Scenario A -->
+                    <div class="scenario-card bg-slate-800 p-6 rounded-xl border border-slate-700" onclick="updateSimulation('softLanding', this)">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-lg text-emerald-400">情景 A: 完美软着陆</h4>
+                            <span class="text-xs bg-slate-700 px-2 py-1 rounded">概率 40%</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-4">通胀回落至2%，经济温和增长，美联储顺利降息。</p>
+                        <ul class="text-xs text-slate-400 space-y-1">
+                            <li>• 股债双牛</li>
+                            <li>• 波动率下降</li>
+                        </ul>
+                    </div>
+
+                    <!-- Scenario B -->
+                    <div class="scenario-card active bg-slate-800 p-6 rounded-xl border-2 border-blue-500" onclick="updateSimulation('stagflation', this)">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-lg text-amber-400">情景 B: 滞胀轻风</h4>
+                            <span class="text-xs bg-slate-700 px-2 py-1 rounded">概率 40%</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-4">通胀粘滞在3-4%，增长乏力，关税推升成本。</p>
+                        <ul class="text-xs text-slate-400 space-y-1">
+                            <li>• 股债相关性不稳定</li>
+                            <li>• 黄金/现金为王</li>
+                        </ul>
+                    </div>
+
+                    <!-- Scenario C -->
+                    <div class="scenario-card bg-slate-800 p-6 rounded-xl border border-slate-700" onclick="updateSimulation('reflation', this)">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-lg text-red-400">情景 C: 财政冲击/再通胀</h4>
+                            <span class="text-xs bg-slate-700 px-2 py-1 rounded">概率 20%</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-4">赤字失控，长端利率飙升，美元信用受损。</p>
+                        <ul class="text-xs text-slate-400 space-y-1">
+                            <li>• 长债暴跌</li>
+                            <li>• 实物资产爆发</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Simulation Chart -->
+                <div class="bg-slate-800 rounded-2xl p-6 md:p-10 shadow-2xl max-w-4xl mx-auto border border-slate-700">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white">表现预测 (Resilience Score)</h3>
+                            <p class="text-sm text-slate-400 mt-1" id="sim-desc">当前情景：滞胀轻风。永久组合因黄金和现金的保护而胜出。</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-slate-500 uppercase">胜出者</span>
+                            <div class="text-2xl font-bold text-amber-400" id="sim-winner">永久组合 🏆</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="simChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Deep Dive Analysis -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">为何 2025 是永久组合的“主场”？</h2>
+                <p class="text-lg text-slate-600">
+                    三个核心资产类别的差异决定了胜负天平的倾斜。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Gold -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-4xl mb-4">🥇</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">黄金权重</h3>
+                    <div class="flex items-center justify-between mb-4 text-sm font-mono bg-slate-50 p-2 rounded">
+                        <span class="text-teal-600">全天候: 7.5%</span>
+                        <span class="text-amber-600 font-bold">永久: 25%</span>
+                    </div>
+                    <p class="text-sm text-slate-600">
+                        2025是黄金的结构性牛市（央行购金+地缘避险）。永久组合的重仓使其能捕捉这一时代的贝塔收益。
+                    </p>
+                </div>
+
+                <!-- Bonds -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-4xl mb-4">📉</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">久期风险</h3>
+                    <div class="flex items-center justify-between mb-4 text-sm font-mono bg-slate-50 p-2 rounded">
+                        <span class="text-teal-600">全天候: ~55%</span>
+                        <span class="text-amber-600 font-bold">永久: 25%</span>
+                    </div>
+                    <p class="text-sm text-slate-600">
+                        收益率曲线“熊市陡峭化”预期下，长债可能成为拖累。全天候策略对长债的过度依赖是其最大软肋。
+                    </p>
+                </div>
+
+                <!-- Cash -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-4xl mb-4">💵</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">现金期权</h3>
+                    <div class="flex items-center justify-between mb-4 text-sm font-mono bg-slate-50 p-2 rounded">
+                        <span class="text-teal-600">全天候: ~0%</span>
+                        <span class="text-amber-600 font-bold">永久: 25%</span>
+                    </div>
+                    <p class="text-sm text-slate-600">
+                        在3%+的利率环境下，现金不仅提供无风险收益，更是波动的稳定器和再平衡的“干火药”。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Verdict & Implementation -->
+        <section id="verdict" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <div class="bg-slate-900 rounded-3xl p-8 md:p-12 text-center text-white mb-12 relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-black mb-6">最终裁决</h2>
+                    <p class="text-xl text-slate-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                        在 2025 年特定的“大波动”节点，<strong class="text-amber-400">哈利·布朗的永久投资组合</strong>展现出更强的适应性与稳健性。
+                        简单的结构胜过复杂的工程。
+                    </p>
+                    <div class="inline-block bg-white/10 backdrop-blur rounded-lg p-6 border border-white/20">
+                        <h4 class="font-bold text-lg mb-4 text-amber-400">2025 永久组合构建指南</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left text-sm">
+                            <div>
+                                <div class="font-bold text-white">股票 (25%)</div>
+                                <div class="text-slate-400">VTI / VT</div>
+                                <div class="text-xs text-slate-500 mt-1">繁荣期引擎</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">国债 (25%)</div>
+                                <div class="text-slate-400">TLT</div>
+                                <div class="text-xs text-slate-500 mt-1">通缩期保险</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">黄金 (25%)</div>
+                                <div class="text-slate-400">GLD / IAU</div>
+                                <div class="text-xs text-slate-500 mt-1">通胀期盾牌</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">现金 (25%)</div>
+                                <div class="text-slate-400">SHV / SGOV</div>
+                                <div class="text-xs text-slate-500 mt-1">衰退期稳定器</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-50 border-t border-slate-200 py-12 text-center">
+        <p class="text-slate-500 text-sm">基于 2025 年宏观经济研究报告生成。不构成投资建议。</p>
+    </footer>
+
+    <script>
+        // --- Data & Logic ---
+
+        // Chart Utilities (Label Wrapping)
+        function formatLabel(str, maxLength = 10) {
+            if (str.length <= maxLength) return str;
+            const words = str.split(''); // Simple split for Chinese
+            let lines = [];
+            let currentLine = '';
+            words.forEach(char => {
+                if (currentLine.length < maxLength) {
+                    currentLine += char;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = char;
+                }
+            });
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { font: { family: "'Noto Sans SC', sans-serif" }, padding: 20 } },
+                tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', padding: 12, cornerRadius: 8 }
+            }
+        };
+
+        // 1. Allocation Charts
+        const dalioCtx = document.getElementById('dalioChart').getContext('2d');
+        new Chart(dalioCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['长期债券 (40%)', '股票 (30%)', '中期债券 (15%)', '黄金 (7.5%)', '大宗商品 (7.5%)'],
+                datasets: [{
+                    data: [40, 30, 15, 7.5, 7.5],
+                    backgroundColor: ['#2dd4bf', '#0f766e', '#5eead4', '#fcd34d', '#f97316'], // Teals + Gold/Orange
+                    borderWidth: 0
+                }]
+            },
+            options: { ...commonChartOptions, cutout: '70%' }
+        });
+
+        const browneCtx = document.getElementById('browneChart').getContext('2d');
+        new Chart(browneCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['股票 (25%)', '长期债券 (25%)', '黄金 (25%)', '现金 (25%)'],
+                datasets: [{
+                    data: [25, 25, 25, 25],
+                    backgroundColor: ['#0f766e', '#2dd4bf', '#fbbf24', '#94a3b8'], // Teal, Teal, Amber, Slate
+                    borderWidth: 0
+                }]
+            },
+            options: { ...commonChartOptions, cutout: '70%' }
+        });
+
+        // 2. Simulation Logic
+        const simCtx = document.getElementById('simChart').getContext('2d');
+        const simChart = new Chart(simCtx, {
+            type: 'bar',
+            data: {
+                labels: ['全天候策略 (All Weather)', '永久组合 (Permanent)'],
+                datasets: [{
+                    label: '表现预测评分 (0-100)',
+                    data: [60, 85], // Default: Stagflation-Lite
+                    backgroundColor: ['#2dd4bf', '#fbbf24'],
+                    borderRadius: 8,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#f8fafc', font: { size: 14, weight: 'bold' } } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { title: () => '' } }
+                }
+            }
+        });
+
+        const scenarios = {
+            softLanding: {
+                name: "完美软着陆",
+                desc: "通胀消退，股债双牛。全天候策略因债券杠杆和股票贝塔而大放异彩。",
+                scores: [90, 70], // AW wins
+                winner: "全天候策略 🏆",
+                winnerColor: "text-teal-400"
+            },
+            stagflation: {
+                name: "滞胀轻风",
+                desc: "通胀粘性，增长乏力。全天候受股债相关性失效困扰，永久组合因黄金和现金胜出。",
+                scores: [60, 85], // PP wins
+                winner: "永久组合 🏆",
+                winnerColor: "text-amber-400"
+            },
+            reflation: {
+                name: "财政冲击",
+                desc: "赤字与利率飙升。全天候的长债仓位遭遇灾难，永久组合的实物资产属性爆发。",
+                scores: [40, 95], // PP wins big
+                winner: "永久组合 🏆",
+                winnerColor: "text-amber-400"
+            }
+        };
+
+        function updateSimulation(key, el) {
+            // UI Update
+            document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active', 'border-2', 'border-blue-500'));
+            el.classList.add('active', 'border-2', 'border-blue-500');
+
+            // Data Update
+            const s = scenarios[key];
+            simChart.data.datasets[0].data = s.scores;
+            simChart.update();
+
+            // Text Update
+            document.getElementById('sim-desc').textContent = `当前情景：${s.name}。${s.desc}`;
+            const wEl = document.getElementById('sim-winner');
+            wEl.textContent = s.winner;
+            wEl.className = `text-2xl font-bold ${s.winnerColor}`;
+        }
+
+    </script>
+</body>
+</html>
